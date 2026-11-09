@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tabela SUS no TRF-1 · Nordeste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: faixa verde da marca no topo; abaixo, resumo, filtros fixos, mapa + estados, ritmo e fases, tabela. */
+:root {
+  --verde: #006851;           /* Pantone 342 C */
+  --cinza-marca: #AEADB3;     /* Pantone 877 C */
+  --grafite: #1C1C1C;
+  --bg: #F3F5F4;
+  --panel: #FFFFFF;
+  --fg: #1C1C1C;
+  --muted: #5D5F64;
+  --line: #DCDFDD;
+  --banda: #006851;
+  --banda-fg: #FFFFFF;
+  --banda-muted: #CFE3DC;
+  --c-com: #006851;
+  --c-sem: #3B3C41;
+  --c-ver: #C0841B;
+  --c-pend: #E3E4E7;
+  --c-pend-fg: #8A8B91;
+  --barra: #006851;
+  --foco: #00A37A;
+  --sombra: 0 6px 24px rgba(16, 32, 26, .14);
+  --f-display: "Jost", "Century Gothic", "Avenir Next", "Segoe UI", sans-serif;
+  --f-corpo: "Jost", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --raio: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111413; --panel: #1A1E1C; --fg: #ECEDEC; --muted: #A2A6A4; --line: #2B302E;
+    --banda: #00493A; --banda-fg: #FFFFFF; --banda-muted: #A9C9BE;
+    --c-com: #2FA581; --c-sem: #CDCED3; --c-ver: #E2A645; --c-pend: #2C312F; --c-pend-fg: #7E8381;
+    --barra: #2FA581; --foco: #4CC79F; --sombra: 0 6px 24px rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111413; --panel: #1A1E1C; --fg: #ECEDEC; --muted: #A2A6A4; --line: #2B302E;
+  --banda: #00493A; --banda-fg: #FFFFFF; --banda-muted: #A9C9BE;
+  --c-com: #2FA581; --c-sem: #CDCED3; --c-ver: #E2A645; --c-pend: #2C312F; --c-pend-fg: #7E8381;
+  --barra: #2FA581; --foco: #4CC79F; --sombra: 0 6px 24px rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--f-corpo); font-size: 15px; line-height: 1.5;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.miolo {
+  max-width: 1240px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- faixa da marca */
+.banda { background: var(--banda); color: var(--banda-fg); }
+.banda .miolo { padding-block: 28px 30px; display: grid; gap: 22px; }
+.logo { height: 34px; width: auto; display: block; }
+.logo .logo-texto { fill: #FFFFFF; }
+.logo .logo-simbolo { fill: var(--cinza-marca); }
+.titulo { display: grid; gap: 6px; max-width: 62ch; }
+.sobretitulo { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--banda-muted); font-weight: 500; }
+h1 { margin: 0; font-family: var(--f-display); font-weight: 600; font-size: clamp(26px, 4vw, 38px); line-height: 1.12; text-wrap: balance; }
+.banda p { margin: 0; color: var(--banda-muted); }
+.cobertura { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cobertura .rotulo { font-size: 13px; color: var(--banda-muted); margin-right: 4px; }
+.chip-uf {
+  display: inline-flex; align-items: center; gap: 6px; border-radius: 999px;
+  padding: 3px 11px; font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,.55);
+}
+.chip-uf.ok { background: #FFFFFF; color: #00493A; border-color: #FFFFFF; }
+.chip-uf.pend { border-style: dashed; color: var(--banda-muted); }
+.chip-uf small { font-weight: 400; opacity: .8; }
+
+/* ---------- resumo */
+.resumo { padding-block: 28px 8px; display: grid; gap: 20px; }
+.frase { margin: 0; font-size: clamp(17px, 2vw, 20px); max-width: 70ch; text-wrap: pretty; }
+.frase b { font-weight: 600; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--raio); padding: 14px 16px; display: grid; gap: 2px; align-content: start; }
+.kpi .rot { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+.kpi .val { font-family: var(--f-display); font-size: 32px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi .sub { font-size: 13px; color: var(--muted); }
+.ponto { width: 10px; height: 10px; border-radius: 3px; flex: none; display: inline-block; }
+
+/* ---------- filtros */
+.filtros-wrap { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.filtros { padding-block: 10px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.filtros label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+select.campo, input.campo {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; min-height: 36px;
+}
+input.campo { min-width: 0; width: 100%; }
+.segmentos { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.seg {
+  border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 5px 12px;
+  font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 34px;
+}
+.seg[aria-pressed="true"] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); font-weight: 500; }
+.limpar { background: none; border: none; color: var(--verde); text-decoration: underline; cursor: pointer; font-size: 13px; padding: 4px; }
+:root[data-theme="dark"] .limpar { color: var(--c-com); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .limpar { color: var(--c-com); } }
+
+/* ---------- blocos */
+.grade { padding-block: 20px; display: grid; gap: 16px; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+.grade.par { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); padding-top: 0; }
+@media (max-width: 900px) { .grade, .grade.par { grid-template-columns: minmax(0, 1fr); } }
+.bloco { background: var(--panel); border: 1px solid var(--line); border-radius: var(--raio); padding: 18px; min-width: 0; display: grid; gap: 14px; align-content: start; }
+.bloco h2 { margin: 0; font-family: var(--f-display); font-size: 19px; font-weight: 600; text-wrap: balance; }
+.bloco .nota { margin: -8px 0 0; font-size: 13px; color: var(--muted); }
+.legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.legenda b { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* mapa */
+.mapa-box { position: relative; }
+.mapa-box svg { width: 100%; height: auto; display: block; touch-action: manipulation; }
+.mapa-box path.mun { stroke: var(--panel); stroke-width: .35; cursor: pointer; transition: opacity .15s; }
+.mapa-box path.mun:hover, .mapa-box path.mun.ativo { stroke: var(--fg); stroke-width: 1.2; }
+.mapa-box path.uf { fill: none; stroke: var(--fg); stroke-width: .9; opacity: .55; pointer-events: none; }
+.mapa-box text.uf-rot { font-size: 30px; font-weight: 600; fill: var(--fg); paint-order: stroke; stroke: var(--panel); stroke-width: 6px; stroke-linejoin: round; pointer-events: none; }
+.tip {
+  position: absolute; z-index: 5; pointer-events: none; background: var(--panel); color: var(--fg);
+  border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--sombra); padding: 8px 10px;
+  font-size: 13px; max-width: 260px; display: grid; gap: 2px;
+}
+.tip b { font-size: 14px; }
+.tip .t-sit { display: inline-flex; align-items: center; gap: 6px; }
+.tip .t-sub { color: var(--muted); }
+
+/* barras por estado */
+.estados { display: grid; gap: 10px; }
+.est {
+  display: grid; grid-template-columns: 112px minmax(0, 1fr) 54px; gap: 10px; align-items: center;
+  background: none; border: none; padding: 4px; border-radius: 6px; text-align: left; cursor: pointer; width: 100%;
+}
+.est:hover { background: var(--bg); }
+.est[aria-pressed="true"] { background: var(--bg); box-shadow: inset 3px 0 0 var(--fg); }
+.est .nome { font-size: 14px; line-height: 1.2; }
+.est .nome small { display: block; color: var(--muted); font-size: 12px; }
+.trilho { display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: var(--c-pend); }
+.trilho > span { display: block; height: 100%; }
+.trilho.pend { background: repeating-linear-gradient(135deg, var(--c-pend) 0 6px, transparent 6px 11px); border: 1px dashed var(--c-pend-fg); }
+.est .pct { font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.est .pct.pend { font-weight: 400; color: var(--c-pend-fg); font-size: 12px; }
+
+/* gráfico mensal */
+.grafico { position: relative; min-height: 240px; }
+.grafico svg { display: block; width: 100%; }
+.grafico .eixo text { fill: var(--muted); font-size: 11px; }
+.grafico .grade-y line { stroke: var(--line); }
+.grafico rect.col { fill: var(--barra); }
+.grafico rect.col:hover, .grafico rect.col.ativo { fill: var(--c-ver); }
+.grafico rect.alvo { fill: transparent; cursor: default; }
+
+/* listas de barras */
+.listas { display: grid; gap: 22px; }
+.listas h3 { margin: 0 0 8px; font-size: 14px; font-weight: 600; }
+.lista { display: grid; gap: 8px; }
+.item { display: grid; gap: 4px; }
+.item .linha { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+.item .linha span:first-child { min-width: 0; }
+.item .linha b { font-variant-numeric: tabular-nums; font-weight: 600; }
+.item .barra { height: 8px; border-radius: 4px; background: var(--bg); overflow: hidden; }
+.item .barra span { display: block; height: 100%; background: var(--barra); border-radius: 4px; }
+.vazio { color: var(--muted); font-size: 14px; padding: 12px 0; }
+
+/* tabela */
+.tabela-bloco { padding-block: 0 20px; }
+.tabela-topo { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; justify-content: space-between; }
+.tabela-topo .busca { flex: 1 1 280px; display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+.acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.botao {
+  border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 7px 12px; cursor: pointer; font-size: 14px; min-height: 36px;
+}
+.botao.forte { background: var(--verde); border-color: var(--verde); color: #FFFFFF; }
+.contagem { font-size: 13px; color: var(--muted); }
+.rolagem { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--raio); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 980px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; background: var(--panel); position: sticky; top: 0; }
+th button { all: unset; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
+th button:focus-visible { outline: 2px solid var(--foco); }
+th[aria-sort="ascending"] button::after { content: "▲"; font-size: 9px; }
+th[aria-sort="descending"] button::after { content: "▼"; font-size: 9px; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg); }
+td.mun b { font-weight: 600; }
+td.mun small, td small { display: block; color: var(--muted); font-size: 12px; }
+.cnpj { all: unset; cursor: pointer; font-variant-numeric: tabular-nums; border-bottom: 1px dotted var(--muted); white-space: nowrap; }
+.cnpj:focus-visible { outline: 2px solid var(--foco); }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid var(--line); }
+.proc { display: grid; gap: 1px; }
+.proc + .proc { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.proc .n { font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+td.obs { color: var(--muted); font-size: 13px; max-width: 320px; }
+.mais { display: flex; justify-content: center; padding: 12px; }
+.aviso-copia { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 14px; z-index: 50; }
+
+/* rodapé */
+.rodape { padding-block: 8px 40px; display: grid; gap: 12px; font-size: 14px; color: var(--muted); }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: var(--raio); padding: 12px 16px; }
+summary { cursor: pointer; color: var(--fg); font-weight: 500; }
+details h4 { margin: 14px 0 4px; color: var(--fg); font-size: 14px; }
+details ol { margin: 0; padding-left: 20px; display: grid; gap: 3px; max-width: 90ch; }
+details code { font-size: 13px; background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+
+@media (max-width: 520px) {
+  .est { grid-template-columns: 84px minmax(0, 1fr) 46px; }
+  .kpi .val { font-size: 27px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="banda">
+  <div class="miolo">
+    <!--__LOGO__-->
+    <div class="titulo">
+      <span class="sobretitulo">Painel de municípios · Tabela SUS</span>
+      <h1>Ações de reajuste da tabela do SUS no TRF-1</h1>
+      <p id="subtitulo">Municípios do Nordeste que já ajuizaram ação e os que ainda não ajuizaram.</p>
+    </div>
+    <div class="cobertura" id="cobertura" aria-label="Estados pesquisados"><span class="rotulo">Estados:</span></div>
+  </div>
+</header>
+
+<section class="miolo resumo" aria-label="Resumo">
+  <p class="frase" id="frase"></p>
+  <div class="kpis" id="kpis"></div>
+</section>
+
+<div class="filtros-wrap">
+  <div class="miolo filtros" role="group" aria-label="Filtros">
+    <label for="f-uf">Estado
+      <select class="campo" id="f-uf"><option value="">Todo o Nordeste</option></select>
+    </label>
+    <div class="segmentos" id="f-sit" role="group" aria-label="Situação"></div>
+    <button class="limpar" id="limpar" type="button" hidden>Limpar filtros</button>
+  </div>
+</div>
+
+<section class="miolo grade" aria-label="Mapa e estados">
+  <article class="bloco" id="bloco-mapa">
+    <h2>Situação de cada município</h2>
+    <p class="nota">Passe o mouse ou toque num município para ver os detalhes. Clique para abri-lo na tabela.</p>
+    <div class="legenda" id="legenda-mapa"></div>
+    <div class="mapa-box" id="mapa"></div>
+  </article>
+  <article class="bloco" id="bloco-estados">
+    <h2>Municípios com ação, por estado</h2>
+    <p class="nota">Percentual dos municípios de cada estado que já têm ação. Clique num estado para filtrar o painel.</p>
+    <div class="estados" id="estados"></div>
+  </article>
+</section>
+
+<section class="miolo grade par" aria-label="Processos">
+  <article class="bloco" id="bloco-meses">
+    <h2>Ações ajuizadas por mês</h2>
+    <p class="nota" id="nota-meses">Data de autuação das ações em que o município é autor.</p>
+    <div class="grafico" id="meses"></div>
+  </article>
+  <article class="bloco" id="bloco-fases">
+    <h2>Onde estão as ações</h2>
+    <p class="nota">Último movimento de cada processo, agrupado por fase, e a vara de tramitação.</p>
+    <div class="listas">
+      <div><h3>Fase</h3><div class="lista" id="fases"></div></div>
+      <div><h3>Vara</h3><div class="lista" id="varas"></div></div>
+    </div>
+  </article>
+</section>
+
+<section class="miolo tabela-bloco" aria-label="Municípios">
+  <article class="bloco" id="bloco-tabela">
+    <h2>Municípios</h2>
+    <div class="tabela-topo">
+      <label class="busca" for="f-busca">Buscar por município, CNPJ ou número do processo
+        <input class="campo" id="f-busca" type="search" autocomplete="off" placeholder="Ex.: Caruaru, 10.091.536 ou 1004128">
+      </label>
+      <div class="acoes">
+        <button class="botao" id="copiar-cnpjs" type="button">Copiar CNPJs</button>
+        <button class="botao forte" id="baixar" type="button">Baixar planilha (CSV)</button>
+      </div>
+    </div>
+    <div class="contagem" id="contagem"></div>
+    <div class="rolagem">
+      <table>
+        <thead><tr>
+          <th scope="col" data-col="nome"><button type="button">Município</button></th>
+          <th scope="col" data-col="uf"><button type="button">UF</button></th>
+          <th scope="col">CNPJ</th>
+          <th scope="col" data-col="sit"><button type="button">Situação</button></th>
+          <th scope="col" data-col="n"><button type="button">Ações</button></th>
+          <th scope="col" data-col="aut"><button type="button">Processos</button></th>
+          <th scope="col">Observação</th>
+        </tr></thead>
+        <tbody id="corpo"></tbody>
+      </table>
+    </div>
+    <div class="mais" id="mais" hidden><button class="botao" type="button">Mostrar mais</button></div>
+  </article>
+</section>
+
+<footer class="miolo rodape">
+  <details>
+    <summary>Como a pesquisa foi feita</summary>
+    <div id="metodologia"></div>
+  </details>
+  <details>
+    <summary>Como atualizar este painel</summary>
+    <ol>
+      <li>Salve a planilha do novo estado nesta pasta com o nome <code>reajuste-sus-trf1-&lt;uf&gt;.xlsx</code> (por exemplo, <code>reajuste-sus-trf1-ce.xlsx</code>), com as abas Resumo, Municípios e Processos.</li>
+      <li>Rode <code>py -3 painel/gerar_painel.py</code> na pasta CONSOLIDAÇÃO MUNICÍPIOS TABELA SUS.</li>
+      <li>O estado sai de "pesquisa pendente" e entra nos números, no mapa e na tabela.</li>
+    </ol>
+  </details>
+  <p id="gerado"></p>
+</footer>
+
+<script>
+const D = /*__DADOS__*/null;
+
+(function () {
+  "use strict";
+  const nf = new Intl.NumberFormat("pt-BR");
+  const pf = (v) => new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 0 }).format(v);
+  const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const SIT = {
+    com: { rot: "Com ação", cor: "var(--c-com)" },
+    sem: { rot: "Sem ação", cor: "var(--c-sem)" },
+    verificar: { rot: "A verificar", cor: "var(--c-ver)" },
+    pendente: { rot: "Pesquisa pendente", cor: "var(--c-pend)" },
+  };
+  const ORDEM_SIT = { com: 0, verificar: 1, sem: 2, pendente: 3 };
+  const UF = {}; D.estados.forEach((e) => (UF[e.uf] = e));
+  const procs = {}; D.processos.forEach((p) => (procs[p.ibge] = procs[p.ibge] || []).push(p));
+  Object.values(procs).forEach((l) => l.sort((a, b) => (b.aut || "").localeCompare(a.aut || "")));
+  const pesquisados = D.estados.filter((e) => e.pesquisado);
+  const pendentes = D.estados.filter((e) => !e.pesquisado);
+
+  const F = { uf: "", sit: "", busca: "", col: "nome", dir: 1, limite: 100 };
+
+  // ---------- utilidades
+  function h(tag, props, ...filhos) {
+    const el = document.createElement(tag);
+    if (props) for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === "text") el.textContent = v;
+      else if (k === "class") el.className = v;
+      else if (k === "style") el.style.cssText = v;
+      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (const f of filhos.flat()) if (f != null) el.append(f);
+    return el;
+  }
+  const NS = "http://www.w3.org/2000/svg";
+  function s(tag, attrs) { const el = document.createElementNS(NS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]); return el; }
+  const ponto = (sit) => h("span", { class: "ponto", style: `background:${SIT[sit].cor}` + (sit === "pendente" ? ";outline:1px dashed var(--c-pend-fg)" : "") });
+  const dataBR = (iso) => iso ? `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}` : "—";
+  const norm = (t) => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const soDig = (t) => String(t || "").replace(/\D/g, "");
+  const listaUFs = (l) => l.length <= 1 ? l.join("") : l.slice(0, -1).join(", ") + " e " + l[l.length - 1];
+  function avisar(msg) {
+    const a = h("div", { class: "aviso-copia", role: "status", text: msg });
+    document.body.append(a); setTimeout(() => a.remove(), 1800);
+  }
+  async function copiar(texto, msg) {
+    try { await navigator.clipboard.writeText(texto); avisar(msg); }
+    catch (e) {
+      const t = h("textarea", { style: "position:fixed;opacity:0" }); t.value = texto; document.body.append(t); t.select();
+      try { document.execCommand("copy"); avisar(msg); } catch (e2) { avisar("Não foi possível copiar"); }
+      t.remove();
+    }
+  }
+
+  // ---------- recortes
+  const noRecorteUF = (m) => !F.uf || m.uf === F.uf;
+  function municipiosTabela() {
+    const q = norm(F.busca.trim()), qd = soDig(F.busca);
+    return D.municipios.filter((m) => {
+      if (!noRecorteUF(m)) return false;
+      if (F.sit && m.sit !== F.sit) return false;
+      if (!q) return true;
+      if (norm(m.nome).includes(q)) return true;
+      if (qd.length >= 4 && (soDig(m.cnpj).includes(qd) || (procs[m.ibge] || []).some((p) => soDig(p.num).includes(qd)))) return true;
+      return false;
+    });
+  }
+  const processosRecorte = () => D.processos.filter((p) => !F.uf || p.uf === F.uf);
+
+  // ---------- cabeçalho
+  function montarCabecalho() {
+    const cob = document.getElementById("cobertura");
+    D.estados.forEach((e) => cob.append(h("span", { class: "chip-uf " + (e.pesquisado ? "ok" : "pend"), title: e.nome + (e.pesquisado ? ", pesquisado" : ", pesquisa pendente") },
+      e.uf, e.pesquisado ? null : h("small", { text: "pendente" }))));
+    const datas = [...new Set(pesquisados.map((e) => e.data).filter(Boolean))];
+    document.getElementById("subtitulo").textContent =
+      `Municípios do Nordeste que já ajuizaram ação e os que ainda não ajuizaram. Pesquisa no PJe do TRF-1, 1º grau` +
+      (datas.length ? `, em ${datas.join(", ")}.` : ".");
+    const sel = document.getElementById("f-uf");
+    D.estados.forEach((e) => sel.append(h("option", { value: e.uf, text: e.nome + (e.pesquisado ? "" : " (pendente)") })));
+    sel.addEventListener("change", () => { F.uf = sel.value; F.limite = 100; atualizar(); });
+    const seg = document.getElementById("f-sit");
+    [["", "Todas"], ["com", SIT.com.rot], ["sem", SIT.sem.rot], ["verificar", SIT.verificar.rot], ["pendente", SIT.pendente.rot]].forEach(([v, r]) => {
+      seg.append(h("button", { type: "button", class: "seg", "data-sit": v, "aria-pressed": String(v === F.sit),
+        onclick: () => { F.sit = v; F.limite = 100; atualizar(); } }, v ? ponto(v) : null, r));
+    });
+    document.getElementById("limpar").addEventListener("click", () => {
+      F.uf = ""; F.sit = ""; F.busca = ""; F.limite = 100;
+      document.getElementById("f-busca").value = ""; atualizar();
+    });
+    document.getElementById("gerado").textContent =
+      `Painel gerado em ${D.gerado} a partir das planilhas da pasta. Lista de municípios e CNPJs: SICONFI (Tesouro Nacional). Mapa: malha municipal do IBGE.`;
+    const met = document.getElementById("metodologia");
+    pesquisados.forEach((e) => {
+      met.append(h("h4", { text: `${e.nome} · ${e.arquivo}` }), h("ol", null, e.metodologia.map((t) => h("li", { text: t }))));
+    });
+    if (pendentes.length) met.append(h("h4", { text: "Ainda não pesquisados" }), h("p", { text: pendentes.map((e) => e.nome).join(", ") + "." }));
+  }
+
+  // ---------- resumo
+  function contar(lista) {
+    const c = { com: 0, sem: 0, verificar: 0, pendente: 0 };
+    lista.forEach((m) => c[m.sit]++);
+    return c;
+  }
+  function resumo() {
+    const base = D.municipios.filter(noRecorteUF);
+    const c = contar(base), pesq = c.com + c.sem + c.verificar, nProc = processosRecorte().length;
+    const frase = document.getElementById("frase"); frase.replaceChildren();
+    const e = F.uf ? UF[F.uf] : null;
+    if (e && !e.pesquisado) {
+      frase.append(`${e.nome} ainda não foi pesquisado. A lista dos `, h("b", { text: nf.format(c.pendente) }), ` municípios e CNPJs já está no painel e os números entram quando a planilha do estado for gerada.`);
+    } else if (pesq) {
+      const onde = e ? `Em ${e.nome}` : `Nos ${pesquisados.length} estados pesquisados até agora (${listaUFs(pesquisados.map((x) => x.uf))})`;
+      frase.append(`${onde}, `, h("b", { text: nf.format(c.com) }), ` dos ${nf.format(pesq)} municípios (`, h("b", { text: pf(c.com / pesq) }),
+        `) já têm ação de reajuste da tabela do SUS no TRF-1, e `, h("b", { text: nf.format(c.sem) }), ` ainda não têm.`);
+      if (c.verificar) frase.append(` ${nf.format(c.verificar)} precisam de conferência.`);
+      if (!e && pendentes.length) frase.append(` Falta pesquisar ${listaUFs(pendentes.map((x) => x.uf))}.`);
+    }
+    const k = document.getElementById("kpis"); k.replaceChildren();
+    const tile = (rot, val, sub, sit) => h("div", { class: "kpi" }, h("span", { class: "rot" }, sit ? ponto(sit) : null, rot), h("span", { class: "val", text: val }), h("span", { class: "sub", text: sub }));
+    k.append(
+      tile("Municípios pesquisados", nf.format(pesq), `de ${nf.format(base.length)} ${e ? "no estado" : "no Nordeste"}`),
+      tile("Com ação", nf.format(c.com), pesq ? `${pf(c.com / pesq)} dos pesquisados` : "—", "com"),
+      tile("Sem ação", nf.format(c.sem), pesq ? `${pf(c.sem / pesq)} dos pesquisados` : "—", "sem"),
+      tile("A verificar", nf.format(c.verificar), c.verificar ? "só apareceram homônimos" : "nenhum caso", "verificar"),
+      tile("Ações encontradas", nf.format(nProc), "processos com o município como autor"),
+    );
+  }
+
+  // ---------- mapa
+  const caminhos = {};
+  let tip;
+  function montarMapa() {
+    const box = document.getElementById("mapa");
+    const M = D.mapa;
+    const svg = s("svg", { viewBox: `0 0 ${M.w} ${M.h}`, role: "img", "aria-label": "Mapa dos municípios do Nordeste coloridos pela situação da ação no TRF-1" });
+    const gm = s("g", {}), ge = s("g", {}), gr = s("g", {});
+    D.municipios.forEach((m) => {
+      const d = M.municipios[m.ibge]; if (!d) return;
+      const p = s("path", { d, class: "mun", tabindex: "-1" }); p.__m = m; caminhos[m.ibge] = p; gm.append(p);
+    });
+    Object.entries(M.estados).forEach(([uf, d]) => {
+      ge.append(s("path", { d, class: "uf" }));
+    });
+    svg.append(gm, ge, gr);
+    box.append(svg);
+    // rótulos dos estados no centro de cada contorno
+    requestAnimationFrame(() => {
+      ge.querySelectorAll("path").forEach((p, i) => {
+        const uf = Object.keys(M.estados)[i]; const b = p.getBBox();
+        const ajuste = { MA: [0, 0.1], PI: [0, 0.15], BA: [0, 0], PE: [-0.15, 0], PB: [0, 0], RN: [0, -0.05], CE: [0, 0], AL: [0.1, 0.1], SE: [0.2, 0.2] }[uf] || [0, 0];
+        const t = s("text", { x: b.x + b.width * (0.5 + ajuste[0]), y: b.y + b.height * (0.5 + ajuste[1]), "text-anchor": "middle", class: "uf-rot" });
+        t.textContent = uf; gr.append(t);
+      });
+    });
+    tip = h("div", { class: "tip", role: "tooltip", hidden: true });
+    box.append(tip);
+    let ativo = null;
+    const mostrar = (ev, p) => {
+      if (ativo && ativo !== p) ativo.classList.remove("ativo");
+      ativo = p; p.classList.add("ativo");
+      const m = p.__m, l = procs[m.ibge] || [];
+      tip.replaceChildren(
+        h("b", { text: `${m.nome} (${m.uf})` }),
+        h("span", { class: "t-sit" }, ponto(m.sit), SIT[m.sit].rot + (l.length > 1 ? ` · ${l.length} ações` : "")),
+        l[0] ? h("span", { class: "t-sub", text: `Autuada em ${dataBR(l[0].aut)} · ${l[0].fase}` }) : null,
+        h("span", { class: "t-sub num", text: `CNPJ ${m.cnpj}` }),
+      );
+      tip.hidden = false;
+      const r = box.getBoundingClientRect();
+      const x = ev.clientX - r.left, y = ev.clientY - r.top;
+      const w = tip.offsetWidth, hh = tip.offsetHeight;
+      tip.style.left = Math.min(Math.max(4, x + 14), r.width - w - 4) + "px";
+      tip.style.top = (y - hh - 12 < 0 ? y + 16 : y - hh - 12) + "px";
+    };
+    svg.addEventListener("pointermove", (ev) => { const p = ev.target.closest("path.mun"); if (p) mostrar(ev, p); });
+    svg.addEventListener("pointerleave", () => { tip.hidden = true; if (ativo) ativo.classList.remove("ativo"); ativo = null; });
+    svg.addEventListener("click", (ev) => {
+      const p = ev.target.closest("path.mun"); if (!p) return;
+      if (ev.pointerType === "touch" && !jaAtivo) return; // primeiro toque só mostra o resumo
+      const m = p.__m;
+      F.busca = m.nome; F.uf = m.uf; F.sit = ""; F.limite = 100;
+      document.getElementById("f-busca").value = m.nome;
+      atualizar();
+      document.getElementById("bloco-tabela").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    });
+    let jaAtivo = false;
+    svg.addEventListener("pointerdown", (ev) => {
+      const p = ev.target.closest("path.mun"); jaAtivo = !!p && ativo === p;
+      if (p && ev.pointerType === "touch") mostrar(ev, p);
+    });
+  }
+  function pintarMapa() {
+    D.municipios.forEach((m) => {
+      const p = caminhos[m.ibge]; if (!p) return;
+      p.style.fill = SIT[m.sit].cor;
+      const apaga = (F.uf && m.uf !== F.uf) || (F.sit && m.sit !== F.sit);
+      p.style.opacity = apaga ? ".18" : "1";
+    });
+    const c = contar(D.municipios.filter(noRecorteUF));
+    const leg = document.getElementById("legenda-mapa"); leg.replaceChildren();
+    ["com", "sem", "verificar", "pendente"].forEach((k) => { if (c[k] || k !== "verificar") leg.append(h("span", null, ponto(k), SIT[k].rot, h("b", { text: nf.format(c[k]) }))); });
+  }
+
+  // ---------- estados
+  function estados() {
+    const box = document.getElementById("estados"); box.replaceChildren();
+    D.estados.forEach((e) => {
+      const ms = D.municipios.filter((m) => m.uf === e.uf), c = contar(ms), pesq = c.com + c.sem + c.verificar;
+      const trilho = h("div", { class: "trilho" + (e.pesquisado ? "" : " pend") });
+      if (e.pesquisado) ["com", "verificar", "sem"].forEach((k) => { if (c[k]) trilho.append(h("span", { style: `width:${(c[k] / ms.length) * 100}%;background:${SIT[k].cor}`, title: `${SIT[k].rot}: ${c[k]}` })); });
+      const rot = e.pesquisado ? `${nf.format(c.com)} de ${nf.format(pesq)} com ação` : `${nf.format(ms.length)} municípios, pesquisa pendente`;
+      box.append(h("button", { type: "button", class: "est", "aria-pressed": String(F.uf === e.uf), "aria-label": `${e.nome}: ${rot}`,
+        onclick: () => { F.uf = F.uf === e.uf ? "" : e.uf; F.limite = 100; atualizar(); } },
+        h("span", { class: "nome" }, e.nome, h("small", { text: e.pesquisado ? `${nf.format(c.com)} de ${nf.format(pesq)}` : "pendente" })),
+        trilho,
+        h("span", { class: "pct" + (e.pesquisado ? "" : " pend"), text: e.pesquisado ? pf(c.com / pesq) : "—" })));
+    });
+  }
+
+  // ---------- gráfico mensal
+  function meses() {
+    const box = document.getElementById("meses"); box.replaceChildren();
+    const todos = D.processos.map((p) => p.aut).filter(Boolean).sort();
+    if (!todos.length) { box.append(h("p", { class: "vazio", text: "Nenhuma ação com data de autuação." })); return; }
+    const ini = todos[0].slice(0, 7), fim = todos[todos.length - 1].slice(0, 7);
+    const lista = []; let [a, m] = ini.split("-").map(Number);
+    while (`${a}-${String(m).padStart(2, "0")}` <= fim) { lista.push(`${a}-${String(m).padStart(2, "0")}`); m++; if (m > 12) { m = 1; a++; } }
+    const cont = Object.fromEntries(lista.map((k) => [k, 0]));
+    processosRecorte().forEach((p) => { if (p.aut) cont[p.aut.slice(0, 7)]++; });
+    const total = Object.values(cont).reduce((x, y) => x + y, 0);
+    if (!total) { box.append(h("p", { class: "vazio", text: "Nenhuma ação neste recorte." })); return; }
+    const W = Math.max(280, box.clientWidth), H = 240, mg = { t: 12, r: 8, b: 26, l: 30 };
+    const max = Math.max(...Object.values(cont));
+    const passo = max <= 5 ? 1 : max <= 12 ? 2 : max <= 30 ? 5 : max <= 60 ? 10 : 20;
+    const topo = Math.ceil(max / passo) * passo;
+    const iw = W - mg.l - mg.r, ih = H - mg.t - mg.b, bw = iw / lista.length;
+    const y = (v) => mg.t + ih - (v / topo) * ih;
+    const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img", "aria-label": `Ações ajuizadas por mês, de ${ini} a ${fim}. Total ${total}.` });
+    const g = s("g", { class: "grade-y" }), eixo = s("g", { class: "eixo" });
+    for (let v = 0; v <= topo; v += passo) {
+      g.append(s("line", { x1: mg.l, x2: W - mg.r, y1: y(v), y2: y(v) }));
+      const t = s("text", { x: mg.l - 6, y: y(v) + 4, "text-anchor": "end" }); t.textContent = v; eixo.append(t);
+    }
+    svg.append(g);
+    const cols = s("g", {});
+    lista.forEach((k, i) => {
+      const v = cont[k], x = mg.l + i * bw;
+      if (v) cols.append(Object.assign(s("rect", { class: "col", x: x + bw * 0.12, width: Math.max(1, bw * 0.76), y: y(v), height: mg.t + ih - y(v), rx: Math.min(2, bw / 4) }), { __k: k, __v: v }));
+      const mes = Number(k.slice(5));
+      if (mes === 1 || i === 0) {
+        const t = s("text", { x: x + 1, y: H - 8, "text-anchor": "start" });
+        t.textContent = mes === 1 ? k.slice(0, 4) : `${MESES[mes - 1]}/${k.slice(2, 4)}`; eixo.append(t);
+        if (mes === 1) eixo.append(s("line", { x1: x, x2: x, y1: mg.t + ih, y2: mg.t + ih + 5, stroke: "var(--muted)" }));
+      }
+    });
+    svg.append(cols, eixo);
+    box.append(svg);
+    const t = h("div", { class: "tip", hidden: true }); box.append(t);
+    svg.addEventListener("pointermove", (ev) => {
+      const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) * (W / r.width);
+      const i = Math.floor((px - mg.l) / bw); const k = lista[i];
+      cols.querySelectorAll("rect").forEach((rc) => rc.classList.toggle("ativo", rc.__k === k));
+      if (!k) { t.hidden = true; return; }
+      const mes = Number(k.slice(5));
+      t.replaceChildren(h("b", { text: `${MESES[mes - 1]}/${k.slice(0, 4)}` }), h("span", { text: `${nf.format(cont[k])} ${cont[k] === 1 ? "ação" : "ações"}` }));
+      t.hidden = false;
+      const bx = box.getBoundingClientRect(), x = ev.clientX - bx.left;
+      t.style.left = Math.min(Math.max(4, x + 12), bx.width - t.offsetWidth - 4) + "px";
+      t.style.top = Math.max(0, (y(cont[k]) * r.height / H) - t.offsetHeight - 8) + "px";
+    });
+    svg.addEventListener("pointerleave", () => { t.hidden = true; cols.querySelectorAll("rect.ativo").forEach((rc) => rc.classList.remove("ativo")); });
+    // pico
+    const pico = lista.reduce((b, k) => (cont[k] > cont[b] ? k : b), lista[0]);
+    document.getElementById("nota-meses").textContent =
+      `Data de autuação das ${nf.format(total)} ações em que o município é autor. O mês com mais ações foi ${MESES[Number(pico.slice(5)) - 1]}/${pico.slice(0, 4)}, com ${nf.format(cont[pico])}.`;
+  }
+
+  // ---------- fases e varas
+  function barras(id, contagem) {
+    const box = document.getElementById(id); box.replaceChildren();
+    const itens = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
+    if (!itens.length) { box.append(h("p", { class: "vazio", text: "Nenhuma ação neste recorte." })); return; }
+    const max = itens[0][1], tot = itens.reduce((x, [, v]) => x + v, 0);
+    itens.forEach(([rot, v]) => box.append(h("div", { class: "item" },
+      h("div", { class: "linha" }, h("span", { text: rot }), h("b", { text: `${nf.format(v)} · ${pf(v / tot)}` })),
+      h("div", { class: "barra" }, h("span", { style: `width:${(v / max) * 100}%` })))));
+  }
+  function fases() {
+    const f = {}, v = {};
+    processosRecorte().forEach((p) => { f[p.fase] = (f[p.fase] || 0) + 1; const k = p.vara || "Não informada"; v[k] = (v[k] || 0) + 1; });
+    barras("fases", f); barras("varas", v);
+  }
+
+  // ---------- tabela
+  function chaveOrdem(m) {
+    switch (F.col) {
+      case "uf": return m.uf + norm(m.nome);
+      case "sit": return ORDEM_SIT[m.sit] + norm(m.nome);
+      case "n": return m.n;
+      case "aut": return (procs[m.ibge] || [])[0]?.aut || "";
+      default: return norm(m.nome);
+    }
+  }
+  function tabela() {
+    const lista = municipiosTabela().sort((a, b) => {
+      const x = chaveOrdem(a), y = chaveOrdem(b);
+      return (x < y ? -1 : x > y ? 1 : 0) * F.dir || norm(a.nome).localeCompare(norm(b.nome));
+    });
+    document.querySelectorAll("th[data-col]").forEach((th) => th.setAttribute("aria-sort", th.dataset.col === F.col ? (F.dir > 0 ? "ascending" : "descending") : "none"));
+    const corpo = document.getElementById("corpo"); corpo.replaceChildren();
+    lista.slice(0, F.limite).forEach((m) => {
+      const l = procs[m.ibge] || [];
+      corpo.append(h("tr", null,
+        h("td", { class: "mun" }, h("b", { text: m.nome }), h("small", { class: "num", text: `IBGE ${m.ibge}` })),
+        h("td", { text: m.uf }),
+        h("td", null, h("button", { type: "button", class: "cnpj", title: "Copiar CNPJ", text: m.cnpj, onclick: () => copiar(m.cnpj, "CNPJ copiado") })),
+        h("td", null, h("span", { class: "pill" }, ponto(m.sit), SIT[m.sit].rot)),
+        h("td", { class: "num", text: m.sit === "pendente" ? "—" : nf.format(m.n) }),
+        h("td", null, l.length ? l.map((p) => h("div", { class: "proc" },
+          h("span", { class: "n", text: p.num }),
+          h("small", { text: `${p.vara} · autuada em ${dataBR(p.aut)}` }),
+          h("small", { text: `${p.fase}: ${p.mov}` }))) : h("small", { text: m.sit === "pendente" ? "Estado ainda não pesquisado" : "Nenhuma ação encontrada" })),
+        h("td", { class: "obs", text: m.obs || "" }),
+      ));
+    });
+    if (!lista.length) corpo.append(h("tr", null, h("td", { colspan: "7", class: "vazio", text: "Nenhum município neste recorte. Mude os filtros ou a busca." })));
+    const mostr = Math.min(F.limite, lista.length);
+    document.getElementById("contagem").textContent =
+      `${nf.format(lista.length)} ${lista.length === 1 ? "município" : "municípios"}` + (mostr < lista.length ? `, mostrando ${nf.format(mostr)}` : "");
+    const mais = document.getElementById("mais"); mais.hidden = mostr >= lista.length;
+    mais.querySelector("button").textContent = `Mostrar mais ${nf.format(Math.min(100, lista.length - mostr))}`;
+    document.getElementById("baixar").textContent = `Baixar planilha (CSV, ${nf.format(lista.length)})`;
+    return lista;
+  }
+  function montarTabela() {
+    document.querySelectorAll("th[data-col] button").forEach((b) => b.addEventListener("click", () => {
+      const col = b.parentElement.dataset.col;
+      if (F.col === col) F.dir = -F.dir; else { F.col = col; F.dir = col === "n" || col === "aut" ? -1 : 1; }
+      tabela();
+    }));
+    let tmr;
+    document.getElementById("f-busca").addEventListener("input", (ev) => {
+      clearTimeout(tmr); tmr = setTimeout(() => { F.busca = ev.target.value; F.limite = 100; tabela(); filtrosVisuais(); }, 150);
+    });
+    document.querySelector("#mais button").addEventListener("click", () => { F.limite += 100; tabela(); });
+    document.getElementById("copiar-cnpjs").addEventListener("click", () => {
+      const l = municipiosTabela(); copiar(l.map((m) => m.cnpj).join("\n"), `${nf.format(l.length)} CNPJs copiados`);
+    });
+    document.getElementById("baixar").addEventListener("click", () => {
+      const l = municipiosTabela().sort((a, b) => a.uf.localeCompare(b.uf) || norm(a.nome).localeCompare(norm(b.nome)));
+      const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+      const linhas = [["UF", "Município", "Código IBGE", "CNPJ", "Situação", "Nº de ações", "Processos", "Varas", "Autuação", "Fase", "Último movimento", "Observação"]];
+      l.forEach((m) => {
+        const p = procs[m.ibge] || [];
+        linhas.push([m.uf, m.nome, m.ibge, m.cnpj, SIT[m.sit].rot, m.sit === "pendente" ? "" : m.n,
+          p.map((x) => x.num).join(" | "), p.map((x) => x.vara).join(" | "), p.map((x) => dataBR(x.aut)).join(" | "),
+          p.map((x) => x.fase).join(" | "), p.map((x) => x.mov).join(" | "), m.obs]);
+      });
+      const csv = "﻿" + linhas.map((r) => r.map(esc).join(";")).join("\r\n");
+      const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      const nome = `municipios-tabela-sus-${F.uf ? F.uf.toLowerCase() : "nordeste"}${F.sit ? "-" + F.sit : ""}.csv`;
+      const a = h("a", { href: url, download: nome }); document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    });
+  }
+
+  // ---------- orquestração
+  function filtrosVisuais() {
+    document.getElementById("f-uf").value = F.uf;
+    document.querySelectorAll("#f-sit .seg").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.sit === F.sit)));
+    document.getElementById("limpar").hidden = !(F.uf || F.sit || F.busca);
+  }
+  function atualizar() { filtrosVisuais(); resumo(); pintarMapa(); estados(); meses(); fases(); tabela(); }
+
+  montarCabecalho(); montarMapa(); montarTabela(); atualizar();
+  let largura = document.getElementById("meses").clientWidth, rt;
+  new ResizeObserver(() => {
+    const w = document.getElementById("meses").clientWidth;
+    if (Math.abs(w - largura) < 2) return; largura = w;
+    clearTimeout(rt); rt = setTimeout(meses, 120);
+  }).observe(document.getElementById("meses"));
+})();
+</script>
+</body>
+</html>
